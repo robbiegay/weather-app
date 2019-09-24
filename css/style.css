@@ -3,3 +3,8 @@
 #hideTable, #errorMsg {
     display: none;
 }
+
+/* Makes the columns of the table equal width */
+.table {
+    table-layout: fixed;
+}

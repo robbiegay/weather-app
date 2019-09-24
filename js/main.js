@@ -1,14 +1,17 @@
 // JavaScript
 
+// Get Weather Button
 let btn = document.querySelector('.btn');
 
-// Test Fields
+// Table fields
 let city = document.querySelector('#city');
 let tempK = document.querySelector('#tempK');
 let tempF = document.querySelector('#tempF');
 let tempC = document.querySelector('#tempC');
 let status = document.querySelector('#status');
 let tempIcon = document.querySelector('#tempIcon');
+
+// Error message
 let errorMsg = document.querySelector('#errorMsg');
 
 btn.addEventListener('click', getWeather);
