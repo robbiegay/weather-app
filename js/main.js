@@ -4,7 +4,9 @@ let btn = document.querySelector('.btn');
 
 // Test Fields
 let city = document.querySelector('#city');
-let temp = document.querySelector('#temp');
+let tempK = document.querySelector('#tempK');
+let tempF = document.querySelector('#tempF');
+let tempC = document.querySelector('#tempC');
 let status = document.querySelector('#status');
 
 btn.addEventListener('click', getWeather);
@@ -17,12 +19,16 @@ async function getWeather() {
     // console.log(JSON.stringify(currentWeather));
     // console.log(currentWeather);
     // console.log(typeof currentWeather);
-    // console.log(currentWeather.main.temp);
+    // console.log(currentWeather.main.tempK);
     // console.log(currentWeather.weather[0].description);
     // console.log(currentWeather.name);
 
     city.innerHTML = currentWeather.name;
-    temp.innerHTML = currentWeather.main.temp;
+    tempK.innerHTML = `${currentWeather.main.temp} K`;
+    // K to F Formula = (0K − 273.15) × 9/5 + 32 = -459.7°F
+    tempF.innerHTML = `${((Number(currentWeather.main.temp) - 273.15) * (9 / 5) + 32).toFixed(2)} F`;
+    // K to C Formula = 0K − 273.15 = -273.1°C
+    tempC.innerHTML = `${(Number(currentWeather.main.temp) - 273.15).toFixed(2)} C`;
     status.innerHTML = currentWeather.weather[0].description;
 
 
