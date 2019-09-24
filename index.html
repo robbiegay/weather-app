@@ -29,7 +29,7 @@
         <div class="input-group">
           <!-- Added autofocus to input field on page load -->
           <input type="text" class="form-control" placeholder="Zip Code" aria-label="Zip Code for Weather"
-            aria-describedby="getWeather" autofocus>
+            aria-describedby="getWeather" autofocus required>
           <div class="input-group-append">
             <button class="btn btn-outline-secondary text-white bg-primary" type="button" id="getWeather">GET
               WEATHER</button>
@@ -41,63 +41,67 @@
         <!-- <p id="tempK">Temp</p> -->
         <!-- <p id="status">Status</p> -->
 
-        <!-- City Table -->
-        <table class="table text-center border my-4">
-          <thread>
-            <tr class="bg-warning">
-              <th scope="col">City</th>
-            </tr>
-          </thread>
-          <thread>
-            <tr class="bg-white">
-              <td id="city" scope="row"></td>
-            </tr>
-          </thread>
-        </table>
+        <p id="errorMsg" class="text-center text-danger py-2"></p>
 
-        <!-- Temp Table -->
-        <table class="table text-center border my-4">
-          <thread>
-            <tr class="bg-warning">
-              <th scope="col" colspan="3">Temperature</th>
-            </tr>
-          </thread>
-          <thread>
-            <tr class="bg-white">
-              <td id="tempK" scope="row"></td>
-              <td id="tempF" scope="row"></td>
-              <td id="tempC" scope="row"></td>
-            </tr>
-          </thread>
-        </table>
+        <div id="hideTable">
+          <!-- City Table -->
+          <table class="table text-center border my-4">
+            <thread>
+              <tr class="bg-warning">
+                <th scope="col">City</th>
+              </tr>
+            </thread>
+            <thread>
+              <tr class="bg-white">
+                <td id="city" scope="row"></td>
+              </tr>
+            </thread>
+          </table>
 
-        <!-- Condition Table -->
-        <table class="table text-center border my-4">
-          <thread>
-            <tr class="bg-warning">
-              <th scope="col">Condition</th>
-            </tr>
-          </thread>
-          <thread>
-            <tr class="bg-white">
-              <td id="status" scope="row"></td>
-            </tr>
-          </thread>
-        </table>
+          <!-- Temp Table -->
+          <table class="table text-center border my-4">
+            <thread>
+              <tr class="bg-warning">
+                <th scope="col" colspan="3">Temperature</th>
+              </tr>
+            </thread>
+            <thread>
+              <tr class="bg-white">
+                <td id="tempK" scope="row"></td>
+                <td id="tempF" scope="row"></td>
+                <td id="tempC" scope="row"></td>
+              </tr>
+            </thread>
+          </table>
 
-        <!-- Season Display -->
-        <table class="table text-center border my-4">
-          <thread>
-            <tr class="bg-warning">
-              <th scope="col">Season Display</th>
-            </tr>
-          </thread>
-          <thread>
-            <tr class="bg-white">
-              <td id="tempIcon" scope="row"></td>
-            </tr>
-          </thread>
-        </table>
+          <!-- Condition Table -->
+          <table class="table text-center border my-4">
+            <thread>
+              <tr class="bg-warning">
+                <th scope="col">Condition</th>
+              </tr>
+            </thread>
+            <thread>
+              <tr class="bg-white">
+                <td id="status" scope="row"></td>
+              </tr>
+            </thread>
+          </table>
+
+          <!-- Season Display -->
+          <table class="table text-center border my-4">
+            <thread>
+              <tr class="bg-warning">
+                <th scope="col">Season Display</th>
+              </tr>
+            </thread>
+            <thread>
+              <tr class="bg-white">
+                <td id="tempIcon" scope="row"></td>
+              </tr>
+            </thread>
+          </table>
+        </div>
 
 
         <!-- Closing of Page Formatting -->
