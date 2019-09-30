@@ -2,8 +2,6 @@
 
 // Get Weather Button
 let btn = document.querySelector('.btn');
-let geoBtn = document.querySelector('#geoLocation');
-let byCoord = false;
 
 // Table fields
 let city = document.querySelector('#city');
@@ -32,20 +30,13 @@ async function getWeather() {
         let response;
 
         if (byCoord === true) {
+            // Geolocation code
             let lat = 0;
             let long = 0;
 
-            function getCoord() {
-                return new Promise(resolve => {
-                    navigator.geolocation.getCurrentPosition(success, error, options);
-                    resolve();
-                });
-            }
+            await getGeo();
+            
 
-            // navigator.geolocation.getCurrentPosition(success, error, options);
-
-            await getCoord();
-            response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&APPID=15d6e8a17e124db561676b9b0b009aac`);
         } else {
             let zip = document.querySelector('.form-control').value;
 
@@ -85,7 +76,17 @@ async function getWeather() {
 }
 
 // Get weather by current location:
+
+let byCoord = false;
+
+let geoBtn = document.querySelector('#geoLocation');
 geoBtn.addEventListener('click', getLocation);
+
+function getLocation() {
+    byCoord = true;
+    getWeather();
+    byCoord = false;
+}
 
 function success(position) {
     let location = position.coords;
@@ -97,6 +98,33 @@ function success(position) {
     console.log(`Latitude : ${location.latitude}`);
     console.log(`Longitude: ${location.longitude}`);
     console.log(`More or less ${location.accuracy} meters.`);
+    displayLocation();
+}
+
+async function displayLocation (){
+    response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&APPID=15d6e8a17e124db561676b9b0b009aac`);
+
+    const currentWeather = await response.json();
+
+        // City
+        city.innerHTML = currentWeather.name;
+
+        // Temp
+        tempK.innerHTML = `${currentWeather.main.temp} K`;
+        // K to F Formula = (0K − 273.15) × 9/5 + 32 = -459.7°F
+        tempF.innerHTML = `${((Number(currentWeather.main.temp) - 273.15) * (9 / 5) + 32).toFixed(2)} °F`;
+        // K to C Formula = 0K − 273.15 = -273.1°C
+        tempC.innerHTML = `${(Number(currentWeather.main.temp) - 273.15).toFixed(2)} °C`;
+
+        // Conditions
+        status.innerHTML = currentWeather.weather[0].description;
+
+        // Temp Icon 
+        tempIcon.innerHTML = `<img src="http://openweathermap.org/img/w/${currentWeather.weather[0].icon}.png">`;
+
+        // Make elements visible
+        document.getElementById('hideTable').style.display = 'block';
+    console.log(response);
 }
 
 function error(err) {
@@ -113,10 +141,14 @@ let options = {
     maximumAge: 0
 }
 
-function getLocation() {
-    byCoord = true;
-    getWeather();
-    byCoord = false;
+async function getGeo(){
+    var self = this;
+
+    var p = await new Promise((res, rej) => {
+        navigator.geolocation.getCurrentPosition(self.success, self.error, self.options);
+    });
+
+    return p;
 }
 
 
