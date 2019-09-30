@@ -3,6 +3,7 @@
 // Get Weather Button
 let btn = document.querySelector('.btn');
 let geoBtn = document.querySelector('#geoLocation');
+let byCoord = false;
 
 // Table fields
 let city = document.querySelector('#city');
@@ -17,15 +18,39 @@ let errorMsg = document.querySelector('#errorMsg');
 
 btn.addEventListener('click', getWeather);
 
+// Can use Enter to trigger getWeather
+document.addEventListener('keydown', function(e) {
+    if (e.keyCode === 13) {
+        getWeather();
+    }
+});
+
 async function getWeather() {
     try {
         // Hides error message
         errorMsg.style.display = 'none';
+        let response;
 
-        let zip = document.querySelector('.form-control').value;
-        // alert(`The zip-code is ${zip}`); --> Testing the value of zip
-        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${zip},us&APPID=15d6e8a17e124db561676b9b0b009aac`);
+        if (byCoord === true) {
+            let lat = 0;
+            let long = 0;
 
+            function getCoord() {
+                return new Promise(resolve => {
+                    navigator.geolocation.getCurrentPosition(success, error, options);
+                    resolve();
+                });
+            }
+
+            // navigator.geolocation.getCurrentPosition(success, error, options);
+
+            await getCoord();
+            response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&APPID=15d6e8a17e124db561676b9b0b009aac`);
+        } else {
+            let zip = document.querySelector('.form-control').value;
+
+            response = await fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${zip},us&APPID=15d6e8a17e124db561676b9b0b009aac`);
+        }
 
         const currentWeather = await response.json();
 
@@ -59,6 +84,7 @@ async function getWeather() {
 
 }
 
+// Get weather by current location:
 geoBtn.addEventListener('click', getLocation);
 
 function success(position) {
@@ -87,54 +113,16 @@ let options = {
     maximumAge: 0
 }
 
-async function getLocation() {
-    let lat = 0;
-    let long = 0;
-    navigator.geolocation.getCurrentPosition(success, error, options);
-
-    try {
-        errorMsg.style.display = 'none';
-        navigator.geolocation.getCurrentPosition(success, error, options);
-        
-        const response = await fetch(`api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}`);
-        const currentWeather = await response.json();
-
-        // City
-        city.innerHTML = currentWeather.name;
-
-        // Temp
-        tempK.innerHTML = `${currentWeather.main.temp} K`;
-        // K to F Formula = (0K − 273.15) × 9/5 + 32 = -459.7°F
-        tempF.innerHTML = `${((Number(currentWeather.main.temp) - 273.15) * (9 / 5) + 32).toFixed(2)} °F`;
-        // K to C Formula = 0K − 273.15 = -273.1°C
-        tempC.innerHTML = `${(Number(currentWeather.main.temp) - 273.15).toFixed(2)} °C`;
-
-        // Conditions
-        status.innerHTML = currentWeather.weather[0].description;
-
-        // Temp Icon 
-        tempIcon.innerHTML = `<img src="http://openweathermap.org/img/w/${currentWeather.weather[0].icon}.png">`;
-
-        // Make elements visible
-        document.getElementById('hideTable').style.display = 'block';
-
-    } catch (e) {
-        // Makes error message visible, and hides table
-        errorMsg.style.display = 'block';
-        document.getElementById('hideTable').style.display = 'none';
-        errorMsg.innerHTML = `Please input a valid 5-digit US Zip Code --> Ex. 90210<br><small>[Error: "${e}"]</small>`;
-
-        // alert(`Error: "${e}"\nPlease input a valid 5 digit US Zip Code\nEx. 90210`); --> Old 'alert' style error
-    }
+function getLocation() {
+    byCoord = true;
+    getWeather();
+    byCoord = false;
 }
-
-
-
 
 
 // Notes:
 
-// API URL: `api.openweathermap.org/data/2.5/weather?zip=${zip},us&APPID=15d6e8a17e124db561676b9b0b009aac`
+// API URL: `https://api.openweathermap.org/data/2.5/weather?zip=${zip},us&APPID=15d6e8a17e124db561676b9b0b009aac`
 
 // Test commands:
 // console.log(JSON.stringify(currentWeather)); --> Logs the string version of JSON data
