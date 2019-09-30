@@ -16,14 +16,33 @@ let errorMsg = document.querySelector('#errorMsg');
 
 btn.addEventListener('click', getWeather);
 
+// Can use Enter to trigger getWeather
+document.addEventListener('keydown', function(e) {
+    if (e.keyCode === 13) {
+        getWeather();
+    }
+});
+
 async function getWeather() {
     try {
         // Hides error message
         errorMsg.style.display = 'none';
+        let response;
 
-        let zip = document.querySelector('.form-control').value;
-        // alert(`The zip-code is ${zip}`); --> Testing the value of zip
-        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${zip},us&APPID=15d6e8a17e124db561676b9b0b009aac`);
+        if (byCoord === true) {
+            // Geolocation code
+            let lat = 0;
+            let long = 0;
+
+            await getGeo();
+            
+
+        } else {
+            let zip = document.querySelector('.form-control').value;
+
+            response = await fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${zip},us&APPID=15d6e8a17e124db561676b9b0b009aac`);
+        }
+
         const currentWeather = await response.json();
 
         // City
@@ -56,11 +75,86 @@ async function getWeather() {
 
 }
 
+// Get weather by current location:
+
+let byCoord = false;
+
+let geoBtn = document.querySelector('#geoLocation');
+geoBtn.addEventListener('click', getLocation);
+
+function getLocation() {
+    byCoord = true;
+    getWeather();
+    byCoord = false;
+}
+
+function success(position) {
+    let location = position.coords;
+
+    lat = location.latitude;
+    long = location.longitude;
+
+    console.log('Your current position is:');
+    console.log(`Latitude : ${location.latitude}`);
+    console.log(`Longitude: ${location.longitude}`);
+    console.log(`More or less ${location.accuracy} meters.`);
+    displayLocation();
+}
+
+async function displayLocation (){
+    response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&APPID=15d6e8a17e124db561676b9b0b009aac`);
+
+    const currentWeather = await response.json();
+
+        // City
+        city.innerHTML = currentWeather.name;
+
+        // Temp
+        tempK.innerHTML = `${currentWeather.main.temp} K`;
+        // K to F Formula = (0K − 273.15) × 9/5 + 32 = -459.7°F
+        tempF.innerHTML = `${((Number(currentWeather.main.temp) - 273.15) * (9 / 5) + 32).toFixed(2)} °F`;
+        // K to C Formula = 0K − 273.15 = -273.1°C
+        tempC.innerHTML = `${(Number(currentWeather.main.temp) - 273.15).toFixed(2)} °C`;
+
+        // Conditions
+        status.innerHTML = currentWeather.weather[0].description;
+
+        // Temp Icon 
+        tempIcon.innerHTML = `<img src="http://openweathermap.org/img/w/${currentWeather.weather[0].icon}.png">`;
+
+        // Make elements visible
+        document.getElementById('hideTable').style.display = 'block';
+    console.log(response);
+}
+
+function error(err) {
+    errorMsg.style.display = 'block';
+    document.getElementById('hideTable').style.display = 'none';
+    errorMsg.innerHTML = `Error: Could not get current location<br><small>[Error${err.code}: ${err.message}]</small>`;
+}
+
+let options = {
+    enableHighAccuracy: true,
+    // Time before error message fires
+    timeout: 5000,
+    // Will use an old location if max age is set to a certain time. 0 = call new location each time
+    maximumAge: 0
+}
+
+async function getGeo(){
+    var self = this;
+
+    var p = await new Promise((res, rej) => {
+        navigator.geolocation.getCurrentPosition(self.success, self.error, self.options);
+    });
+
+    return p;
+}
 
 
 // Notes:
 
-// API URL: `api.openweathermap.org/data/2.5/weather?zip=${zip},us&APPID=15d6e8a17e124db561676b9b0b009aac`
+// API URL: `https://api.openweathermap.org/data/2.5/weather?zip=${zip},us&APPID=15d6e8a17e124db561676b9b0b009aac`
 
 // Test commands:
 // console.log(JSON.stringify(currentWeather)); --> Logs the string version of JSON data
